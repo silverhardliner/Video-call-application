@@ -1,0 +1,11 @@
+name: video_audio_chat
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - opencv
+  - numpy
+  - matplotlib
+  - pyaudio
+  - pip 
