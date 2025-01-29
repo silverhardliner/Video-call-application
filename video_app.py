@@ -32,7 +32,7 @@ class VideoChat:
         self.FORMAT = pyaudio.paInt16
         self.CHANNELS = 1
         self.RATE = 44100
-        
+
         self.p = pyaudio.PyAudio()
         self.audio_input_stream = self.p.open(
             format=self.FORMAT,
@@ -40,15 +40,15 @@ class VideoChat:
             rate=self.RATE,
             input=True,
             input_device_index=self.audio_index,
-            frames_per_buffer=self.CHUNK
+            frames_per_buffer=self.CHUNK,
         )
-        
+
         self.audio_output_stream = self.p.open(
             format=self.FORMAT,
             channels=self.CHANNELS,
             rate=self.RATE,
             output=True,
-            frames_per_buffer=self.CHUNK
+            frames_per_buffer=self.CHUNK,
         )
 
         logger.info("VideoChat initialized")
@@ -88,7 +88,7 @@ class VideoChat:
                     client_socket.sendall(audio_length.to_bytes(4, byteorder="big"))
                     # Send audio data
                     client_socket.sendall(audio_data)
-                    
+
                     # Receive audio from client
                     audio_length_data = client_socket.recv(4)
                     if audio_length_data:
@@ -173,7 +173,7 @@ class VideoChat:
                 self.client.sendall(audio_length.to_bytes(4, byteorder="big"))
                 # Send audio data
                 self.client.sendall(audio_data)
-                
+
                 # Receive audio from server
                 audio_length_data = self.client.recv(4)
                 if audio_length_data:
@@ -223,24 +223,29 @@ class VideoChat:
 
     def __del__(self):
         # Clean up audio resources
-        if hasattr(self, 'audio_input_stream'):
+        if hasattr(self, "audio_input_stream"):
             self.audio_input_stream.stop_stream()
             self.audio_input_stream.close()
-        if hasattr(self, 'audio_output_stream'):
+        if hasattr(self, "audio_output_stream"):
             self.audio_output_stream.stop_stream()
             self.audio_output_stream.close()
-        if hasattr(self, 'p'):
+        if hasattr(self, "p"):
             self.p.terminate()
 
 
+# Main function
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Video Chat Application")
     parser.add_argument(
         "-m", "--mode", choices=["server", "client"], required=True, help="Run as server or client"
     )
     parser.add_argument("-i", "--ip", default="127.0.0.1", help="Server IP address (default: 127.0.0.1)")
-    parser.add_argument("-sc", "--server_camera", type=int, default=0, help="Server camera index (default: 0)")
-    parser.add_argument("-cc", "--client_camera", type=int, default=1, help="Client camera index (default: 1)")
+    parser.add_argument(
+        "-sc", "--server_camera", type=int, default=0, help="Server camera index (default: 0)"
+    )
+    parser.add_argument(
+        "-cc", "--client_camera", type=int, default=1, help="Client camera index (default: 1)"
+    )
     parser.add_argument("-sa", "--server_audio", type=int, default=0, help="Server audio index (default: 0)")
     parser.add_argument("-ca", "--client_audio", type=int, default=1, help="Client audio index (default: 1)")
     args = parser.parse_args()
